@@ -197,9 +197,6 @@ void List_InsertAfter(List *list, int data) {
   ListElementPtr tmpElementOne;
   ListElementPtr tmpElementTwo;
   if (list->firstElement != NULL) {
-    tmpElementOne = malloc(sizeof(ListElementPtr));
-    tmpElementTwo = malloc(sizeof(ListElementPtr));
-
     tmpElementOne->data = data;
     tmpElementTwo = list->activeElement->nextElement;
     list->activeElement->nextElement = tmpElementOne;
@@ -216,7 +213,13 @@ void List_InsertAfter(List *list, int data) {
  * @param dataPtr Ukazatel na cílovou proměnnou
  */
 void List_GetValue(List *list, int *dataPtr) {
-  solved = FALSE; /* V případě řešení, smažte tento řádek! */
+  if(list->firstElement != NULL){
+    if(list->activeElement != NULL){
+    *dataPtr = list->activeElement;
+    }
+  }else{
+    List_Error();
+  }
 }
 
 /**
@@ -228,7 +231,9 @@ void List_GetValue(List *list, int *dataPtr) {
  * @param data Nová hodnota právě aktivního prvku
  */
 void List_SetValue(List *list, int data) {
-  solved = FALSE; /* V případě řešení, smažte tento řádek! */
+  if(list->firstElement != NULL){
+    list->activeElement->data = data;
+  }
 }
 
 /**
@@ -240,7 +245,13 @@ void List_SetValue(List *list, int data) {
  * seznamu
  */
 void List_Next(List *list) {
-  solved = FALSE; /* V případě řešení, smažte tento řádek! */
+  if(list->activeElement != NULL){
+    if(list->activeElement->nextElement == NULL){
+      list->activeElement = NULL;
+    }else{
+      list->activeElement = list->activeElement->nextElement;
+    }
+  }
 }
 
 /**
@@ -251,7 +262,6 @@ void List_Next(List *list) {
  * seznamu
  */
 int List_IsActive(List *list) {
-  // solved = FALSE; /* V případě řešení, smažte tento řádek! */
   return list->activeElement != NULL;
 }
 
