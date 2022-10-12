@@ -228,7 +228,7 @@ void List_DeleteAfter(List *list)
  */
 void List_InsertAfter(List *list, int data)
 {
-  if (list->firstElement != NULL)
+  if (list->activeElement != NULL)
   {
     ListElementPtr tmpElement;
     tmpElement = malloc(2*sizeof(ListElementPtr));
