@@ -166,6 +166,7 @@ void DLL_InsertLast(DLList *list, int data)
   {
     tmpElement->data = data;
     tmpElement->nextElement = NULL;
+
     if (list->lastElement != NULL)
     {
       list->lastElement->nextElement = tmpElement;
@@ -393,7 +394,6 @@ void DLL_DeleteBefore(DLList *list)
  */
 void DLL_InsertAfter(DLList *list, int data)
 {
-  // TO DO
   if (list->activeElement != NULL)
   {
     struct DLLElement *tmpElement = malloc(sizeof(struct DLLElement));
