@@ -64,7 +64,8 @@ int solved;
  * Vytiskne upozornění na to, že došlo k chybě.
  * Tato funkce bude volána z některých dále implementovaných operací.
  */
-void DLL_Error() {
+void DLL_Error()
+{
   printf("*ERROR* The program has performed an illegal operation.\n");
   error_flag = TRUE;
 }
@@ -78,7 +79,8 @@ void DLL_Error() {
  *
  * @param list Ukazatel na strukturu dvousměrně vázaného seznamu
  */
-void DLL_Init(DLList *list) {
+void DLL_Init(DLList *list)
+{
   list->activeElement = NULL;
   list->firstElement = NULL;
   list->lastElement = NULL;
@@ -91,19 +93,26 @@ void DLL_Init(DLList *list) {
  *
  * @param list Ukazatel na inicializovanou strukturu dvousměrně vázaného seznamu
  */
-void DLL_Dispose(DLList *list) {
-  DLLElementPtr tmpElement;
-  while (list->lastElement != NULL) {
+void DLL_Dispose(DLList *list)
+{
+  struct DLLElement *tmpElement;
+  while (list->lastElement != NULL)
+  {
     tmpElement = list->firstElement;
-    if (list->firstElement != list->lastElement) {
+
+    if (list->firstElement != list->lastElement)
+    {
       list->firstElement = tmpElement->nextElement;
-      list->firstElement->previousElement = NULL;
-    } else {
+    }
+    else
+    {
       list->firstElement = NULL;
       list->lastElement = NULL;
     }
     free(tmpElement);
   }
+
+  list->activeElement = NULL;
 }
 
 /**
@@ -114,21 +123,29 @@ void DLL_Dispose(DLList *list) {
  * @param list Ukazatel na inicializovanou strukturu dvousměrně vázaného seznamu
  * @param data Hodnota k vložení na začátek seznamu
  */
-void DLL_InsertFirst(DLList *list, int data) {
-  DLLElementPtr tmpElement;
-  tmpElement = malloc(4 * sizeof(DLLElementPtr));
+void DLL_InsertFirst(DLList *list, int data)
+{
+  struct DLLElement *tmpElement = malloc(sizeof(struct DLLElement));
 
-  if (tmpElement != NULL) {
+  if (tmpElement != NULL)
+  {
     tmpElement->data = data;
-    if (list->firstElement != NULL) {
+    tmpElement->previousElement = NULL;
+    if (list->firstElement != NULL)
+    {
       list->firstElement->previousElement = tmpElement;
       tmpElement->nextElement = list->firstElement;
-    } else {
-      tmpElement->nextElement = NULL;
-      list->lastElement = tmpElement;
     }
+    else
+    {
+      list->lastElement = tmpElement;
+      tmpElement->nextElement = NULL;
+    }
+
     list->firstElement = tmpElement;
-  } else {
+  }
+  else
+  {
     DLL_Error();
   }
 }
@@ -141,21 +158,29 @@ void DLL_InsertFirst(DLList *list, int data) {
  * @param list Ukazatel na inicializovanou strukturu dvousměrně vázaného seznamu
  * @param data Hodnota k vložení na konec seznamu
  */
-void DLL_InsertLast(DLList *list, int data) {
-  DLLElementPtr tmpElement;
-  tmpElement = malloc(4 * sizeof(DLLElementPtr));
+void DLL_InsertLast(DLList *list, int data)
+{
+  struct DLLElement *tmpElement = malloc(sizeof(struct DLLElement));
 
-  if (tmpElement != NULL) {
+  if (tmpElement != NULL)
+  {
     tmpElement->data = data;
-    if (list->lastElement != NULL) {
+    tmpElement->nextElement = NULL;
+    if (list->lastElement != NULL)
+    {
       list->lastElement->nextElement = tmpElement;
       tmpElement->previousElement = list->lastElement;
-    } else {
-      tmpElement->previousElement = NULL;
-      list->firstElement = tmpElement;  
     }
+    else
+    {
+      list->firstElement = tmpElement;
+      tmpElement->previousElement = NULL;
+    }
+
     list->lastElement = tmpElement;
-  } else {
+  }
+  else
+  {
     DLL_Error();
   }
 }
@@ -167,7 +192,8 @@ void DLL_InsertLast(DLList *list, int data) {
  *
  * @param list Ukazatel na inicializovanou strukturu dvousměrně vázaného seznamu
  */
-void DLL_First(DLList *list) {
+void DLL_First(DLList *list)
+{
   list->activeElement = list->firstElement;
 }
 
@@ -178,7 +204,8 @@ void DLL_First(DLList *list) {
  *
  * @param list Ukazatel na inicializovanou strukturu dvousměrně vázaného seznamu
  */
-void DLL_Last(DLList *list) {
+void DLL_Last(DLList *list)
+{
   list->activeElement = list->lastElement;
 }
 
@@ -189,10 +216,14 @@ void DLL_Last(DLList *list) {
  * @param list Ukazatel na inicializovanou strukturu dvousměrně vázaného seznamu
  * @param dataPtr Ukazatel na cílovou proměnnou
  */
-void DLL_GetFirst(DLList *list, int *dataPtr) {
-  if(list->firstElement != NULL){
+void DLL_GetFirst(DLList *list, int *dataPtr)
+{
+  if (list->firstElement != NULL)
+  {
     *dataPtr = list->firstElement->data;
-  }else{
+  }
+  else
+  {
     DLL_Error();
   }
 }
@@ -204,10 +235,14 @@ void DLL_GetFirst(DLList *list, int *dataPtr) {
  * @param list Ukazatel na inicializovanou strukturu dvousměrně vázaného seznamu
  * @param dataPtr Ukazatel na cílovou proměnnou
  */
-void DLL_GetLast(DLList *list, int *dataPtr) {
-  if(list->firstElement != NULL){
-    *dataPtr = list->firstElement->data;
-  }else{
+void DLL_GetLast(DLList *list, int *dataPtr)
+{
+  if (list->firstElement != NULL)
+  {
+    *dataPtr = list->lastElement->data;
+  }
+  else
+  {
     DLL_Error();
   }
 }
@@ -219,25 +254,28 @@ void DLL_GetLast(DLList *list, int *dataPtr) {
  *
  * @param list Ukazatel na inicializovanou strukturu dvousměrně vázaného seznamu
  */
-void DLL_DeleteFirst(DLList *list) {
-  if(list->firstElement != NULL){
-    DLLElementPtr tmpElement;
-    tmpElement = malloc(4 * sizeof(DLLElementPtr));
+void DLL_DeleteFirst(DLList *list)
+{
+  if (list->firstElement != NULL)
+  {
+    struct DLLElement *tmpElement ;
 
     tmpElement = list->firstElement;
 
-    if(list->firstElement == list->activeElement){
+    if (list->firstElement == list->activeElement)
+    {
       list->activeElement = NULL;
     }
-    if(tmpElement->nextElement != NULL)
+    if (tmpElement->nextElement != NULL)
     {
       list->firstElement = tmpElement->nextElement;
       list->firstElement->previousElement = NULL;
-    }else{
+    }
+    else
+    {
       list->firstElement = NULL;
       list->lastElement = NULL;
     }
-    
 
     free(tmpElement);
   }
@@ -250,25 +288,29 @@ void DLL_DeleteFirst(DLList *list) {
  *
  * @param list Ukazatel na inicializovanou strukturu dvousměrně vázaného seznamu
  */
-void DLL_DeleteLast(DLList *list) {
-   if(list->lastElement != NULL){
-    DLLElementPtr tmpElement;
-    tmpElement = malloc(4 * sizeof(DLLElementPtr));
+void DLL_DeleteLast(DLList *list)
+{
+  if (list->lastElement != NULL)
+  {
+    struct DLLElement *tmpElement ;
 
     tmpElement = list->lastElement;
 
-    if(list->lastElement == list->activeElement){
+    if (list->lastElement == list->activeElement)
+    {
       list->activeElement = NULL;
     }
-    if(tmpElement->previousElement != NULL)
+    if (tmpElement->previousElement != NULL)
     {
       list->lastElement = tmpElement->previousElement;
       list->lastElement->nextElement = NULL;
-    }else{
+    }
+    else
+    {
       list->firstElement = NULL;
       list->lastElement = NULL;
     }
-    
+
     free(tmpElement);
   }
 }
@@ -280,22 +322,29 @@ void DLL_DeleteLast(DLList *list) {
  *
  * @param list Ukazatel na inicializovanou strukturu dvousměrně vázaného seznamu
  */
-void DLL_DeleteAfter(DLList *list) {
-  DLLElementPtr tmpElement ;
-  if (list->activeElement != NULL && list->activeElement != list->lastElement){
+void DLL_DeleteAfter(DLList *list)
+{
+  struct DLLElement *tmpElement;
+  if (list->activeElement != NULL && list->activeElement != list->lastElement)
+  {
     tmpElement = list->activeElement->nextElement;
+
+    if (tmpElement == list->lastElement)
+    {
+      list->lastElement = list->activeElement;
+    }
 
     if (tmpElement->nextElement != NULL)
     {
-      list->activeElement->nextElement  = tmpElement->nextElement;
-      tmpElement->nextElement->previousElement = list->activeElement; 
-    }else
-    {
-      list->activeElement->nextElement  = NULL;
+      list->activeElement->nextElement = tmpElement->nextElement;
+      tmpElement->nextElement->previousElement = list->activeElement;
     }
-    
-    free(tmpElement);
+    else
+    {
+      list->activeElement->nextElement = NULL;
+    }
 
+    free(tmpElement);
   }
 }
 
@@ -306,22 +355,30 @@ void DLL_DeleteAfter(DLList *list) {
  *
  * @param list Ukazatel na inicializovanou strukturu dvousměrně vázaného seznamu
  */
-void DLL_DeleteBefore(DLList *list) {
-  DLLElementPtr tmpElement ;
-  if (list->activeElement != NULL && list->activeElement != list->firstElement){
+void DLL_DeleteBefore(DLList *list)
+{
+  struct DLLElement *tmpElement;
+  if (list->activeElement != NULL && list->activeElement != list->firstElement)
+  {
+
     tmpElement = list->activeElement->previousElement;
+
+    if (tmpElement == list->firstElement)
+    {
+      list->firstElement = list->activeElement;
+    }
 
     if (tmpElement->previousElement != NULL)
     {
-      list->activeElement->previousElement  = tmpElement->previousElement;
-      tmpElement->previousElement->nextElement = list->activeElement; 
-    }else
-    {
-      list->activeElement->previousElement  = NULL;
+      list->activeElement->previousElement = tmpElement->previousElement;
+      tmpElement->previousElement->nextElement = list->activeElement;
     }
-    
-    free(tmpElement);
+    else
+    {
+      list->activeElement->previousElement = NULL;
+    }
 
+    free(tmpElement);
   }
 }
 
@@ -334,21 +391,26 @@ void DLL_DeleteBefore(DLList *list) {
  * @param list Ukazatel na inicializovanou strukturu dvousměrně vázaného seznamu
  * @param data Hodnota k vložení do seznamu za právě aktivní prvek
  */
-void DLL_InsertAfter(DLList *list, int data) {
-  //TO DO
+void DLL_InsertAfter(DLList *list, int data)
+{
+  // TO DO
   if (list->activeElement != NULL)
   {
-    DLLElementPtr tmpElement;
-    tmpElement = malloc(4*sizeof(DLLElementPtr));
+    struct DLLElement *tmpElement = malloc(sizeof(struct DLLElement));
 
     if (tmpElement != NULL)
     {
       tmpElement->data = data;
-      if(list->activeElement->nextElement != NULL){
+
+      if (list->activeElement->nextElement != NULL)
+      {
         tmpElement->nextElement = list->activeElement->nextElement;
-        list->activeElement->nextElement->previousElement = tmpElement;      
-      }else{
+        list->activeElement->nextElement->previousElement = tmpElement;
+      }
+      else
+      {
         tmpElement->nextElement = NULL;
+        list->lastElement = tmpElement;
       }
       tmpElement->previousElement = list->activeElement;
       list->activeElement->nextElement = tmpElement;
@@ -369,27 +431,32 @@ void DLL_InsertAfter(DLList *list, int data) {
  * @param list Ukazatel na inicializovanou strukturu dvousměrně vázaného seznamu
  * @param data Hodnota k vložení do seznamu před právě aktivní prvek
  */
-void DLL_InsertBefore(DLList *list, int data) {
-  DLLElementPtr tmpElement;
-    tmpElement = malloc(4*sizeof(DLLElementPtr));
+void DLL_InsertBefore(DLList *list, int data)
+{
+  struct DLLElement *tmpElement = malloc(sizeof(struct DLLElement));
 
-    if (tmpElement != NULL)
+  if (tmpElement != NULL)
+  {
+    tmpElement->data = data;
+
+    if (list->activeElement != list->firstElement)
     {
-      tmpElement->data = data;
-
-      if(list->activeElement->previousElement != NULL){
-        tmpElement->previousElement = list->activeElement->previousElement;
-        list->activeElement->previousElement->nextElement = tmpElement;      
-      }else{
-        tmpElement->nextElement = NULL;
-      }
-      tmpElement->nextElement = list->activeElement;
-      list->activeElement->previousElement = tmpElement;
+      tmpElement->previousElement = list->activeElement->previousElement;
+      list->activeElement->previousElement->nextElement = tmpElement;
     }
     else
     {
-      DLL_Error();
+      tmpElement->previousElement = NULL;
+      list->firstElement = tmpElement;
     }
+    
+    tmpElement->nextElement = list->activeElement;
+    list->activeElement->previousElement = tmpElement;
+  }
+  else
+  {
+    DLL_Error();
+  }
 }
 
 /**
@@ -399,10 +466,14 @@ void DLL_InsertBefore(DLList *list, int data) {
  * @param list Ukazatel na inicializovanou strukturu dvousměrně vázaného seznamu
  * @param dataPtr Ukazatel na cílovou proměnnou
  */
-void DLL_GetValue(DLList *list, int *dataPtr) {
-  if(list->activeElement != NULL){
+void DLL_GetValue(DLList *list, int *dataPtr)
+{
+  if (list->activeElement != NULL)
+  {
     *dataPtr = list->activeElement->data;
-  }else{
+  }
+  else
+  {
     DLL_Error();
   }
 }
@@ -414,8 +485,10 @@ void DLL_GetValue(DLList *list, int *dataPtr) {
  * @param list Ukazatel na inicializovanou strukturu dvousměrně vázaného seznamu
  * @param data Nová hodnota právě aktivního prvku
  */
-void DLL_SetValue(DLList *list, int data) {
-  if(list->activeElement != NULL){
+void DLL_SetValue(DLList *list, int data)
+{
+  if (list->activeElement != NULL)
+  {
     list->activeElement->data = data;
   }
 }
@@ -427,14 +500,18 @@ void DLL_SetValue(DLList *list, int data) {
  *
  * @param list Ukazatel na inicializovanou strukturu dvousměrně vázaného seznamu
  */
-void DLL_Next(DLList *list) {
-  if(list->activeElement != NULL){
-    if(list->activeElement->nextElement == NULL){
+void DLL_Next(DLList *list)
+{
+  if (list->activeElement != NULL)
+  {
+    if (list->activeElement->nextElement == NULL)
+    {
       list->activeElement = NULL;
-    }else{
-      list->activeElement =list->activeElement->nextElement;
-    } 
-     
+    }
+    else
+    {
+      list->activeElement = list->activeElement->nextElement;
+    }
   }
 }
 
@@ -445,14 +522,18 @@ void DLL_Next(DLList *list) {
  *
  * @param list Ukazatel na inicializovanou strukturu dvousměrně vázaného seznamu
  */
-void DLL_Previous(DLList *list) {
-  if(list->activeElement != NULL){
-    if(list->activeElement->previousElement == NULL){
+void DLL_Previous(DLList *list)
+{
+  if (list->activeElement != NULL)
+  {
+    if (list->activeElement->previousElement == NULL)
+    {
       list->activeElement = NULL;
-    }else{
-      list->activeElement =list->activeElement->previousElement;
-    } 
-     
+    }
+    else
+    {
+      list->activeElement = list->activeElement->previousElement;
+    }
   }
 }
 
@@ -464,7 +545,8 @@ void DLL_Previous(DLList *list) {
  *
  * @returns Nenulovou hodnotu v případě aktivity prvku seznamu, jinak nulu
  */
-int DLL_IsActive(DLList *list) {
+int DLL_IsActive(DLList *list)
+{
   return list->activeElement == NULL ? 0 : 1;
 }
 

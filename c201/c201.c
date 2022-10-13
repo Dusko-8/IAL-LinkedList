@@ -91,7 +91,7 @@ void List_Init(List *list)
  **/
 void List_Dispose(List *list)
 {
-  ListElementPtr tmpElement;
+  struct ListElement *tmpElement;
   while (list->firstElement != NULL)
   {
     tmpElement = list->firstElement;
@@ -105,6 +105,9 @@ void List_Dispose(List *list)
     }
     free(tmpElement);
   }
+
+  list->activeElement = NULL;
+  list->firstElement = NULL;
 }
 
 /**
@@ -119,8 +122,7 @@ void List_Dispose(List *list)
 void List_InsertFirst(List *list, int data)
 {
 
-  ListElementPtr tmpElement;
-  tmpElement = malloc(2*sizeof(ListElementPtr));
+  struct ListElement *tmpElement = malloc(sizeof(struct ListElement));
 
   // Case when list is empty
   if (tmpElement != NULL)
@@ -181,16 +183,22 @@ void List_GetFirst(List *list, int *dataPtr)
  */
 void List_DeleteFirst(List *list)
 {
-  ListElementPtr tmpElement;
+  struct ListElement *tmpElement ;
   if (list->firstElement != NULL)
   {
     tmpElement = list->firstElement;
+
     if (list->firstElement == list->activeElement)
     {
       list->activeElement = NULL;
     }
+    
+    if(tmpElement->nextElement != NULL){
     list->firstElement = tmpElement->nextElement;
-
+    }else{
+      list->firstElement = NULL;
+    }
+    
     free(tmpElement);
   }
 }
@@ -207,7 +215,7 @@ void List_DeleteAfter(List *list)
 {
   if (list->activeElement != NULL && list->activeElement->nextElement != NULL)
   {
-    ListElementPtr tmpElement;
+    struct ListElement *tmpElement ;
 
     tmpElement = list->activeElement->nextElement;
     list->activeElement->nextElement = tmpElement->nextElement;
@@ -230,8 +238,7 @@ void List_InsertAfter(List *list, int data)
 {
   if (list->activeElement != NULL)
   {
-    ListElementPtr tmpElement;
-    tmpElement = malloc(2*sizeof(ListElementPtr));
+    struct ListElement *tmpElement = malloc(sizeof(struct ListElement));
 
     if (tmpElement != NULL)
     {
